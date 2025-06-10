@@ -1,0 +1,466 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PM Intelligence Platform API Schemas",
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "oneOf": [
+            { "type": "object" },
+            { "type": "array" },
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "null" }
+          ]
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "details": { "type": "object" }
+          },
+          "required": ["code", "message"]
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "timestamp": { "type": "string", "format": "date-time" },
+            "requestId": { "type": "string" },
+            "version": { "type": "string" }
+          },
+          "required": ["timestamp", "requestId", "version"]
+        }
+      },
+      "required": ["success"]
+    },
+    "Stakeholder": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string" },
+        "team": { "type": "string" },
+        "responsibilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "name", "role"]
+    },
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "key": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "stakeholders": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Stakeholder" }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "on-hold", "completed", "cancelled"]
+        },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "key", "name", "stakeholders", "status"]
+    },
+    "ActionItem": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "assignee": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "cancelled"]
+        },
+        "source": { "type": "string" }
+      },
+      "required": ["id", "description", "priority", "status"]
+    },
+    "Decision": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "rationale": { "type": "string" },
+        "decidedBy": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "decidedOn": { "type": "string", "format": "date-time" },
+        "impact": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "category": { "type": "string" }
+      },
+      "required": ["id", "description", "decidedBy", "decidedOn", "impact"]
+    },
+    "MeetingAnalysis": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "meetingType": {
+          "type": "string",
+          "enum": ["standup", "sprint_planning", "retrospective", "general"]
+        },
+        "participants": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Stakeholder" }
+        },
+        "actionItems": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActionItem" }
+        },
+        "decisions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Decision" }
+        },
+        "summary": { "type": "string" },
+        "keyTopics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sentiment": {
+          "type": "string",
+          "enum": ["positive", "neutral", "negative"]
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "meetingType", "participants", "actionItems", "decisions", "summary", "sentiment", "timestamp"]
+    },
+    "WSJFScore": {
+      "type": "object",
+      "properties": {
+        "businessValue": { "type": "number", "minimum": 0, "maximum": 13 },
+        "customerValue": { "type": "number", "minimum": 0, "maximum": 13 },
+        "strategicAlignment": { "type": "number", "minimum": 0, "maximum": 13 },
+        "timeCriticality": { "type": "number", "minimum": 0, "maximum": 13 },
+        "riskReduction": { "type": "number", "minimum": 0, "maximum": 13 },
+        "effort": { "type": "number", "minimum": 0, "maximum": 13 },
+        "wsjfScore": { "type": "number", "minimum": 0 },
+        "priorityRank": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["businessValue", "customerValue", "strategicAlignment", "timeCriticality", "riskReduction", "effort", "wsjfScore"]
+    },
+    "BacklogItem": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["story", "epic", "bug", "task"]
+        },
+        "storyPoints": { "type": "integer", "minimum": 0 },
+        "projectKey": { "type": "string" },
+        "epicId": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["open", "in-progress", "done"]
+        },
+        "wsjfScore": { "$ref": "#/definitions/WSJFScore" },
+        "assignee": { "type": "string" },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "title", "description", "type", "projectKey", "status"]
+    },
+    "WorkflowStep": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["analysis", "transformation", "integration", "notification"]
+        },
+        "service": {
+          "type": "string",
+          "enum": ["assistant-mcp", "platform-core", "external"]
+        },
+        "input": { "type": "object" },
+        "output": { "type": "object" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "skipped"]
+        },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "error": { "type": "string" }
+      },
+      "required": ["id", "name", "type", "service", "input", "status"]
+    },
+    "Workflow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["meeting_intelligence", "sprint_planning", "prd_generation", "stakeholder_comms"]
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/WorkflowStep" }
+        },
+        "input": { "type": "object" },
+        "output": { "type": "object" },
+        "context": {
+          "type": "object",
+          "properties": {
+            "workflowId": { "type": "string" },
+            "userId": { "type": "string" },
+            "userRole": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "projectContext": { "$ref": "#/definitions/Project" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "metadata": { "type": "object" }
+          },
+          "required": ["workflowId", "userId", "userRole", "timestamp", "metadata"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "cancelled"]
+        },
+        "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "error": { "type": "string" }
+      },
+      "required": ["id", "name", "description", "type", "steps", "input", "context", "status", "progress", "startTime"]
+    },
+    "WebSocketMessage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["workflow_progress", "workflow_completed", "error", "ping", "pong"]
+        },
+        "workflowId": { "type": "string" },
+        "data": {},
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "data", "timestamp"]
+    }
+  },
+  "endpoints": {
+    "assistant-mcp": {
+      "health": {
+        "method": "GET",
+        "path": "/health",
+        "response": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["healthy", "unhealthy"] },
+            "service": { "type": "string" },
+            "version": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "vault_path": { "type": "string" },
+            "mode": { "type": "string" },
+            "pm_intelligence_platform_ready": { "type": "boolean" }
+          },
+          "required": ["status", "service", "version", "timestamp"]
+        }
+      },
+      "capabilities": {
+        "method": "GET",
+        "path": "/capabilities",
+        "response": {
+          "type": "object",
+          "properties": {
+            "text_analysis": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "meeting_intelligence": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "pm_operations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "document_operations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "planning_operations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "vault_operations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "wsjf_operations": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      },
+      "analyzeMeeting": {
+        "method": "POST",
+        "path": "/meeting/analyze",
+        "request": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "meeting_type": {
+              "type": "string",
+              "enum": ["standup", "sprint_planning", "retrospective", "general"],
+              "default": "general"
+            },
+            "context": { "type": "object" }
+          },
+          "required": ["text"]
+        },
+        "response": {
+          "allOf": [
+            { "$ref": "#/definitions/ApiResponse" },
+            {
+              "properties": {
+                "data": { "$ref": "#/definitions/MeetingAnalysis" }
+              }
+            }
+          ]
+        }
+      },
+      "scoreWSJF": {
+        "method": "POST",
+        "path": "/wsjf/score_item",
+        "request": {
+          "type": "object",
+          "properties": {
+            "item": { "$ref": "#/definitions/BacklogItem" },
+            "context": { "type": "object" }
+          },
+          "required": ["item"]
+        },
+        "response": {
+          "allOf": [
+            { "$ref": "#/definitions/ApiResponse" },
+            {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "item": { "$ref": "#/definitions/BacklogItem" },
+                    "wsjfScore": { "$ref": "#/definitions/WSJFScore" }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "platform-core": {
+      "health": {
+        "method": "GET",
+        "path": "/health",
+        "response": {
+          "allOf": [
+            { "$ref": "#/definitions/ApiResponse" },
+            {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "enum": ["healthy", "unhealthy"] },
+                    "version": { "type": "string" },
+                    "database": { "type": "string", "enum": ["connected", "disconnected"] },
+                    "services": {
+                      "type": "object",
+                      "properties": {
+                        "assistant_mcp": { "type": "string", "enum": ["healthy", "unhealthy"] }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "executeWorkflow": {
+        "method": "POST",
+        "path": "/api/v1/workflows/execute",
+        "request": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["meeting_intelligence", "sprint_planning", "prd_generation", "stakeholder_comms"]
+            },
+            "input": { "type": "object" },
+            "context": { "type": "object" }
+          },
+          "required": ["type", "input"]
+        },
+        "response": {
+          "allOf": [
+            { "$ref": "#/definitions/ApiResponse" },
+            {
+              "properties": {
+                "data": { "$ref": "#/definitions/Workflow" }
+              }
+            }
+          ]
+        }
+      },
+      "getWorkflowStatus": {
+        "method": "GET",
+        "path": "/api/v1/workflows/{workflowId}/status",
+        "parameters": {
+          "workflowId": { "type": "string" }
+        },
+        "response": {
+          "allOf": [
+            { "$ref": "#/definitions/ApiResponse" },
+            {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "workflowId": { "type": "string" },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "running", "completed", "failed", "cancelled"]
+                    },
+                    "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+                    "currentStep": { "type": "string" },
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

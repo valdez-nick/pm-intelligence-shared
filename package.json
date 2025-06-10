@@ -1,0 +1,63 @@
+{
+  "name": "pm-intelligence-unified",
+  "version": "1.0.0",
+  "description": "Unified Product Management Intelligence Platform - Monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "shared/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:assistant\" \"npm run dev:platform\" \"npm run dev:ui\"",
+    "dev:assistant": "cd packages/assistant-mcp && npm run start:api",
+    "dev:platform": "cd packages/platform-core && python -m pm_intelligence.api.cli",
+    "dev:ui": "cd apps/web-ui && npm run dev",
+    "build": "npm run build:assistant && npm run build:platform && npm run build:ui",
+    "build:assistant": "cd packages/assistant-mcp && npm run build",
+    "build:platform": "cd packages/platform-core && python -m build",
+    "build:ui": "cd apps/web-ui && npm run build",
+    "test": "npm run test:assistant && npm run test:platform && npm run test:integration",
+    "test:assistant": "cd packages/assistant-mcp && npm test",
+    "test:platform": "cd packages/platform-core && python -m pytest",
+    "test:integration": "cd test && npm run test:integration",
+    "health": "npm run health:assistant && npm run health:platform",
+    "health:assistant": "curl -s http://localhost:3001/health | jq",
+    "health:platform": "curl -s http://localhost:8000/health | jq",
+    "setup": "npm install && npm run setup:platform && npm run setup:assistant",
+    "setup:platform": "cd packages/platform-core && python -m venv venv && source venv/bin/activate && pip install -e '.[dev]'",
+    "setup:assistant": "cd packages/assistant-mcp && npm install",
+    "docker:build": "docker-compose -f deployment/docker-compose.yml build",
+    "docker:up": "docker-compose -f deployment/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f deployment/docker-compose.yml down",
+    "migration:vault": "node tools/migrate-vault.js",
+    "migration:config": "node tools/migrate-config.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valdez-nick/pm-intelligence-platform.git"
+  },
+  "keywords": [
+    "product-management",
+    "intelligence",
+    "mcp",
+    "workflow-automation",
+    "jira",
+    "confluence",
+    "obsidian",
+    "ai-powered"
+  ],
+  "author": "PM Intelligence Team",
+  "license": "MIT"
+}
