@@ -17,8 +17,13 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
   const connect = useCallback(() => {
     try {
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        return
+      // Clean up any existing connection first
+      if (wsRef.current) {
+        if (wsRef.current.readyState === WebSocket.OPEN) {
+          return
+        }
+        wsRef.current.close()
+        wsRef.current = null
       }
 
       const ws = new WebSocket(url)
@@ -71,11 +76,14 @@ export function useWebSocket(url: string): UseWebSocketReturn {
         console.log('WebSocket disconnected:', event.code, event.reason)
         setConnected(false)
         
-        // Attempt to reconnect after 3 seconds if not a normal closure
-        if (event.code !== 1000 && event.code !== 1001) {
+        // Only reconnect if it's an unexpected closure and we're not unmounting
+        if (event.code !== 1000 && event.code !== 1001 && wsRef.current === ws) {
           reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('Attempting to reconnect...')
-            connect()
+            // Double-check we still want to reconnect
+            if (wsRef.current === ws) {
+              console.log('Attempting to reconnect...')
+              connect()
+            }
           }, 3000)
         }
       }
@@ -108,14 +116,20 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   }, [connect])
 
   useEffect(() => {
-    connect()
+    // Add a small delay to avoid React StrictMode double-invocation issues
+    const connectTimer = setTimeout(() => {
+      connect()
+    }, 100)
 
     return () => {
+      clearTimeout(connectTimer)
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
+        reconnectTimeoutRef.current = null
       }
-      if (wsRef.current) {
-        wsRef.current.close()
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.close(1000, 'Component unmounting')
+        wsRef.current = null
       }
     }
   }, [connect])
