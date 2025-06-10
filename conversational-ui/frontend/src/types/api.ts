@@ -96,8 +96,52 @@ export interface WorkflowStatus {
   progress: number
   current_step?: string
   completed_steps: string[]
+  step_results?: Record<string, any>
   results?: Record<string, any>
   error?: string
+}
+
+export interface WorkflowProgress {
+  progress: number
+  currentStep: string
+  status: string
+  stepResults?: any
+  executionId?: string
+}
+
+// Meeting Intelligence specific types
+export interface MeetingIntelligenceInput {
+  transcript: string
+  project_key: string
+  participants: string[]
+  meeting_title?: string
+  assignee?: string
+  meeting_type?: 'sprint_planning' | 'retrospective' | 'standup' | 'planning' | 'review' | 'general'
+  duration_minutes?: number
+  date?: string
+}
+
+export interface JiraTicket {
+  key: string
+  summary: string
+  description: string
+  url: string
+}
+
+export interface ConfluencePage {
+  id: string
+  title: string
+  url: string
+}
+
+export interface MeetingIntelligenceOutput {
+  workflow_id: string
+  analysis_results: Record<string, any>
+  jira_tickets: JiraTicket[]
+  confluence_pages: ConfluencePage[]
+  execution_time: number
+  success: boolean
+  errors?: string[]
 }
 
 // Chat Message Types
