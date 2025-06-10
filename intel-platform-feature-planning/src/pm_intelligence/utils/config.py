@@ -5,9 +5,9 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-from pydantic import EmailStr, HttpUrl, SecretStr, field_validator
-from pydantic.types import DirectoryPath
+from pydantic import EmailStr, HttpUrl, SecretStr, field_validator, Field
 from pydantic_settings import BaseSettings
+from pydantic.types import DirectoryPath
 
 
 class Config(BaseSettings):
@@ -20,26 +20,26 @@ class Config(BaseSettings):
     """
     
     # Jira Configuration
-    jira_url: HttpUrl
-    jira_email: EmailStr
-    jira_api_token: SecretStr
+    jira_url: HttpUrl = Field(alias="JIRA_URL")
+    jira_email: EmailStr = Field(alias="JIRA_EMAIL")
+    jira_api_token: SecretStr = Field(alias="JIRA_API_TOKEN")
     
     # Confluence Configuration  
-    confluence_url: HttpUrl
-    confluence_email: EmailStr
-    confluence_api_token: SecretStr
+    confluence_url: HttpUrl = Field(alias="CONFLUENCE_URL")
+    confluence_email: EmailStr = Field(alias="CONFLUENCE_EMAIL")
+    confluence_api_token: SecretStr = Field(alias="CONFLUENCE_API_TOKEN")
     
     # Slack Configuration (Optional for MVP)
-    slack_bot_token: Optional[SecretStr] = None
-    slack_app_token: Optional[SecretStr] = None
+    slack_bot_token: Optional[SecretStr] = Field(default=None, alias="SLACK_BOT_TOKEN")
+    slack_app_token: Optional[SecretStr] = Field(default=None, alias="SLACK_APP_TOKEN")
     
     # GitHub Configuration (Optional for MVP)
-    github_token: Optional[SecretStr] = None
-    github_org: Optional[str] = None
+    github_token: Optional[SecretStr] = Field(default=None, alias="GITHUB_TOKEN")
+    github_org: Optional[str] = Field(default=None, alias="GITHUB_ORG")
     
-    # Assistant MCP Configuration (Optional)
-    assistant_mcp_url: Optional[HttpUrl] = None
-    assistant_mcp_api_key: Optional[SecretStr] = None
+    # Assistant MCP Configuration
+    assistant_mcp_url: HttpUrl = Field(default="http://localhost:3000", alias="ASSISTANT_MCP_URL")
+    assistant_mcp_api_key: Optional[SecretStr] = Field(default=None, alias="ASSISTANT_MCP_API_KEY")
     
     # Platform Configuration
     log_level: str = "INFO"
@@ -50,7 +50,7 @@ class Config(BaseSettings):
     
     # Security Configuration
     enable_audit_logging: bool = True
-    encryption_key: Optional[SecretStr] = None
+    encryption_key: SecretStr = Field(default="change-me-in-production", alias="PM_INTEL_ENCRYPTION_KEY")
     
     # Performance Tuning
     batch_size: int = 50
@@ -84,7 +84,8 @@ class Config(BaseSettings):
         "env_file": [".env.local", ".env"],
         "env_file_encoding": "utf-8",
         "env_prefix": "",
-        "case_sensitive": False
+        "case_sensitive": False,
+        "extra": "ignore"
     }
 
 
