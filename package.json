@@ -2,6 +2,7 @@
   "name": "pm-intelligence-unified",
   "version": "1.0.0",
   "description": "Unified Product Management Intelligence Platform - Monorepo",
+  "type": "module",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -17,10 +18,13 @@
     "build:assistant": "cd packages/assistant-mcp && npm run build",
     "build:platform": "cd packages/platform-core && python -m build",
     "build:ui": "cd apps/web-ui && npm run build",
-    "test": "npm run test:assistant && npm run test:platform && npm run test:integration",
+    "test": "node test/test-runner.js",
+    "test:full": "./test/run-tests.sh",
+    "test:compatibility": "node test/test-runner.js --skip-packages --skip-integration",
+    "test:contracts": "node test/integration/api-contracts.test.js",
     "test:assistant": "cd packages/assistant-mcp && npm test",
     "test:platform": "cd packages/platform-core && python -m pytest",
-    "test:integration": "cd test && npm run test:integration",
+    "test:ci": "./test/run-tests.sh --skip-install",
     "health": "npm run health:assistant && npm run health:platform",
     "health:assistant": "curl -s http://localhost:3001/health | jq",
     "health:platform": "curl -s http://localhost:8000/health | jq",
@@ -31,7 +35,8 @@
     "docker:up": "docker-compose -f deployment/docker-compose.yml up -d",
     "docker:down": "docker-compose -f deployment/docker-compose.yml down",
     "migration:vault": "node tools/migrate-vault.js",
-    "migration:config": "node tools/migrate-config.js"
+    "migration:config": "node tools/migrate-config.js",
+    "validate": "npm run test:compatibility && npm run test:contracts"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
