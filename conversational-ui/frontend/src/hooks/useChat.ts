@@ -59,17 +59,22 @@ export function useChat(initialSessionId?: string): UseChatReturn {
         setSessionId(currentSessionId)
       }
 
-      // Send message to API - try real endpoint first, fall back to simple
+      // Send message to API - try MCP endpoint first, fall back to simple
       let response;
       let usedFallback = false;
       try {
-        response = await apiClient.conversations.chat({
-          message: content.trim(),
-          session_id: currentSessionId!
-        });
-        console.log('Real endpoint succeeded with MCP integration');
+        // Try the new direct MCP integration endpoint
+        response = await fetch('/api/v1/conversations/chat/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: content.trim(),
+            session_id: currentSessionId!
+          })
+        }).then(r => r.json());
+        console.log('MCP endpoint succeeded with full PM intelligence');
       } catch (error) {
-        console.log('Real endpoint failed, falling back to simple endpoint:', error);
+        console.log('MCP endpoint failed, falling back to simple endpoint:', error);
         usedFallback = true;
         // Fall back to simple endpoint
         response = await fetch('/api/v1/conversations/chat/simple', {
@@ -97,7 +102,7 @@ export function useChat(initialSessionId?: string): UseChatReturn {
         role: 'assistant',
         content: usedFallback 
           ? `🔄 *[Fallback Mode]* ${response.response}` 
-          : response.response,
+          : `⚡ *[Full PM Intelligence]* ${response.response}`,
         timestamp: response.timestamp,
         tools_used: response.tools_used,
         artifacts: response.artifacts
