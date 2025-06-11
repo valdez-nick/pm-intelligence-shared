@@ -42,3 +42,31 @@ logs/
 *.tmp
 *.temp
 *.bak
+
+# Node.js
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+*.egg-info/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# PID files
+.pm-platform-pids
+
+# Vite
+.vite/
+*/.vite/

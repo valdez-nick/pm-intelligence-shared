@@ -59,11 +59,28 @@ export function useChat(initialSessionId?: string): UseChatReturn {
         setSessionId(currentSessionId)
       }
 
-      // Send message to API
-      const response = await apiClient.conversations.chat({
-        message: content.trim(),
-        session_id: currentSessionId!
-      })
+      // Send message to API - try real endpoint first, fall back to simple
+      let response;
+      let usedFallback = false;
+      try {
+        response = await apiClient.conversations.chat({
+          message: content.trim(),
+          session_id: currentSessionId!
+        });
+        console.log('Real endpoint succeeded with MCP integration');
+      } catch (error) {
+        console.log('Real endpoint failed, falling back to simple endpoint:', error);
+        usedFallback = true;
+        // Fall back to simple endpoint
+        response = await fetch('/api/v1/conversations/chat/simple', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: content.trim(),
+            session_id: currentSessionId!
+          })
+        }).then(r => r.json());
+      }
 
       // Update user message status
       setMessages(prev =>
@@ -78,7 +95,9 @@ export function useChat(initialSessionId?: string): UseChatReturn {
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: response.response,
+        content: usedFallback 
+          ? `🔄 *[Fallback Mode]* ${response.response}` 
+          : response.response,
         timestamp: response.timestamp,
         tools_used: response.tools_used,
         artifacts: response.artifacts
