@@ -2,11 +2,27 @@
 
 Transform your product management workflow with AI-powered automation that acts as your intelligent PM co-pilot.
 
+## 🚀 **New Collaborator? Start Here!**
+
+**Get up and running in 5 minutes:**
+
+```bash
+git clone [repository-url]
+cd pm-intelligence-platform
+./setup-new-collaborator.sh --demo    # For quick demo
+# OR
+./setup-new-collaborator.sh           # For full setup
+```
+
+Then visit **http://localhost:3000** to start using the platform!
+
+📖 **Detailed Setup Guide**: [COLLABORATOR_SETUP.md](COLLABORATOR_SETUP.md)
+
 ## 🔐 Security First
 
 **Important**: This repository uses environment variables for sensitive configuration. Never commit credentials to the repository. 
 
-- Copy `.env.example` files to `.env` for local configuration
+- Copy `.env.example` to `.env` for local configuration
 - See [SECURITY.md](SECURITY.md) for security best practices
 - Run `./scripts/setup-security.sh` to set up pre-commit hooks
 
@@ -45,46 +61,39 @@ pm-intelligence-platform/
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Automated Setup (Recommended)
+
+**For new collaborators:**
+```bash
+./setup-new-collaborator.sh --demo    # 5-minute demo setup
+./setup-new-collaborator.sh           # Full production setup
+```
+
+**Start the platform:**
+```bash
+./start-pm-platform.sh                # Starts all services
+```
+
+Visit **http://localhost:3000** to start using the platform!
+
+### Manual Setup (Advanced Users)
+
+If you prefer manual control or the automated setup fails:
+
+**Prerequisites:**
 - Python 3.8+
 - Node.js 18+
-- Neo4j (optional, for knowledge graph)
-- API credentials for Jira/Confluence
+- Git
+- API credentials (Anthropic/OpenAI for AI, Jira/Confluence for integrations)
 
-### Installation
+**Steps:**
+1. Clone repository
+2. Copy `.env.example` to `.env` and configure
+3. Install Python platform: `cd intel-platform-feature-planning && pip install -e ".[dev]"`
+4. Install frontend: `cd conversational-ui/frontend && npm install`
+5. Start services: `./start-pm-platform.sh`
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/pm-intelligence-platform.git
-   cd pm-intelligence-platform
-   ```
-
-2. **Set up security**
-   ```bash
-   ./scripts/setup-security.sh
-   ```
-
-3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your credentials
-   ```
-
-4. **Install the platform**
-   ```bash
-   cd intel-platform-feature-planning
-   python -m venv venv
-   source venv/bin/activate
-   pip install -e ".[dev]"
-   ```
-
-5. **Start the conversational UI**
-   ```bash
-   cd ../conversational-ui
-   ./start.sh
-   ```
-
-Visit http://localhost:3000 to start using the platform!
+📖 **Detailed Instructions**: [COLLABORATOR_SETUP.md](COLLABORATOR_SETUP.md)
 
 ## 📚 Documentation
 
