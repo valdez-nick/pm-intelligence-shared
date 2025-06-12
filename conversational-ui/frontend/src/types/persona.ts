@@ -173,5 +173,7 @@ export interface ImportWorkflowState {
     customize: boolean;
   };
   importResults?: ImportedAgent[];
+  loading?: boolean;
   error?: string;
+  warning?: string;
 }
