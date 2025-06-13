@@ -7,7 +7,7 @@ interface UseChatReturn {
   sessionId: string | null
   isLoading: boolean
   error: string | null
-  sendMessage: (content: string) => Promise<void>
+  sendMessage: (content: string, context?: { personaId?: string }) => Promise<void>
   clearMessages: () => void
   clearError: () => void
 }
@@ -32,7 +32,7 @@ export function useChat(initialSessionId?: string): UseChatReturn {
     }
   }, [sessionId])
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, context?: { personaId?: string }) => {
     if (!content.trim()) return
 
     setIsLoading(true)
@@ -69,7 +69,8 @@ export function useChat(initialSessionId?: string): UseChatReturn {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: content.trim(),
-            session_id: currentSessionId!
+            session_id: currentSessionId!,
+            persona_id: context?.personaId
           })
         }).then(r => r.json());
         console.log('MCP endpoint succeeded with full PM intelligence');
@@ -82,7 +83,8 @@ export function useChat(initialSessionId?: string): UseChatReturn {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: content.trim(),
-            session_id: currentSessionId!
+            session_id: currentSessionId!,
+            persona_id: context?.personaId
           })
         }).then(r => r.json());
       }

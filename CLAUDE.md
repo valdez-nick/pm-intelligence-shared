@@ -4,15 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Recent Major Changes
 
-### User-Friendly Error Translation System (June 2025)
-- **New Capability**: All technical errors are now translated into user-friendly messages with multi-language support
+### RAG and Vector Database Integration (January 2025)
+- **New Capability**: Agents now have access to historical knowledge through RAG (Retrieval-Augmented Generation)
 - **Key Components**:
-  - `ErrorTranslator`: Multi-language error translation engine (EN, ES, FR, DE, JA)
-  - `ErrorHandlerMiddleware`: Automatic API error interception and translation
-  - React error components with progressive disclosure
-  - Standardized error response format with actionable guidance
-- **Benefits**: Improved UX, reduced support tickets, global accessibility, actionable recovery steps
-- **Documentation**: See `ERROR_TRANSLATION_IMPLEMENTATION_SUMMARY.md`
+  - `VectorStoreManager`: ChromaDB integration for vector storage
+  - `DocumentProcessor`: Intelligent chunking and metadata extraction
+  - `RAGPipeline`: Orchestrates retrieval and generation
+  - `KnowledgeIndexer`: Automated indexing of Jira, Confluence, and platform data
+  - `AgentRAGIntegration`: Seamless integration with agent tool execution
+- **Benefits**: Context-aware decisions, knowledge preservation, continuous learning
+- **Documentation**: See `examples/rag_demo.py` for usage examples
 
 ### Agent Tool Execution (January 2025)
 - **New Capability**: Agents can now dynamically analyze natural language queries and execute MCP tools
