@@ -111,12 +111,6 @@ export class ErrorBoundary extends Component<Props, State> {
     });
   };
 
-  private handleRetryWithDelay = () => {
-    // Show loading state briefly before retrying
-    this.retryTimeoutId = window.setTimeout(() => {
-      this.handleRetry();
-    }, 1000);
-  };
 
   private handleReload = () => {
     window.location.reload();
@@ -316,7 +310,7 @@ export function withErrorBoundary<P extends object>(
  * Hook for handling errors in functional components
  */
 export function useErrorHandler() {
-  const handleError = React.useCallback((error: Error, context?: string) => {
+  const handleError = React.useCallback((error: Error) => {
     // This would throw the error to be caught by the nearest error boundary
     // In a real implementation, you might want to integrate with React Error Boundary patterns
     throw error;

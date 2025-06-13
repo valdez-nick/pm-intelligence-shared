@@ -6,19 +6,25 @@ interface CheckboxProps {
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
   className?: string;
+  tabIndex?: number;
+  'aria-hidden'?: boolean;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({ 
   checked, 
   onCheckedChange, 
   disabled = false,
-  className = ''
+  className = '',
+  tabIndex,
+  'aria-hidden': ariaHidden
 }) => {
   return (
     <button
       type="button"
       onClick={() => !disabled && onCheckedChange(!checked)}
       disabled={disabled}
+      tabIndex={tabIndex}
+      aria-hidden={ariaHidden}
       className={`
         w-4 h-4 rounded border-2 flex items-center justify-center
         transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2

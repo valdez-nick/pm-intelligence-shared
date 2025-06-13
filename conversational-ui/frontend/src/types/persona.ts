@@ -33,9 +33,10 @@ export interface PersonaDetailsResponse {
 
 export interface ScrapedPersona {
   id: string;
+  job_posting_id: string;
+  company_id: string;
   role_title: string;
   role_category: string;
-  company_id: string;
   authority_level: number;
   expertise: string[];
   priorities: string[];
@@ -46,9 +47,10 @@ export interface ScrapedPersona {
   communication_style: string;
   company_context: Record<string, any>;
   industry_context: Record<string, any>;
-  system_prompt: string;
-  confidence_score: number;
   generated_at: string;
+  generation_method: string;
+  confidence_score: number;
+  system_prompt?: string;
 }
 
 export interface PersonaImportRequest {
