@@ -69,6 +69,16 @@ class Config(BaseSettings):
     debug: bool = False
     enable_profiling: bool = False
 
+    # Rate Limiting Configuration
+    rate_limit_enabled: bool = Field(default=True, alias="RATE_LIMIT_ENABLED")
+    rate_limit_requests_per_minute: int = Field(default=100, alias="RATE_LIMIT_REQUESTS_PER_MINUTE")
+    rate_limit_requests_per_hour: int = Field(default=1000, alias="RATE_LIMIT_REQUESTS_PER_HOUR")
+    rate_limit_burst_size: int = Field(default=20, alias="RATE_LIMIT_BURST_SIZE")
+    rate_limit_storage_type: str = Field(default="memory", alias="RATE_LIMIT_STORAGE_TYPE")
+    rate_limit_redis_url: Optional[str] = Field(default=None, alias="RATE_LIMIT_REDIS_URL")
+    rate_limit_bypass_internal: bool = Field(default=True, alias="RATE_LIMIT_BYPASS_INTERNAL")
+    rate_limit_bypass_health_checks: bool = Field(default=True, alias="RATE_LIMIT_BYPASS_HEALTH_CHECKS")
+
     @field_validator("db_path", mode="before")
     @classmethod
     def ensure_db_directory(cls, v):
@@ -93,6 +103,21 @@ class Config(BaseSettings):
         "case_sensitive": False,
         "extra": "ignore",
     }
+
+    def get_rate_limit_config(self):
+        """Create RateLimitConfig from main configuration."""
+        from ..api.middleware.rate_limiting import RateLimitConfig
+        
+        return RateLimitConfig(
+            enabled=self.rate_limit_enabled,
+            requests_per_minute=self.rate_limit_requests_per_minute,
+            requests_per_hour=self.rate_limit_requests_per_hour,
+            burst_size=self.rate_limit_burst_size,
+            storage_type=self.rate_limit_storage_type,
+            redis_url=self.rate_limit_redis_url,
+            bypass_internal=self.rate_limit_bypass_internal,
+            bypass_health_checks=self.rate_limit_bypass_health_checks
+        )
 
 
 @lru_cache()
