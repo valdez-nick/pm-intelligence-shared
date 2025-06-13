@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useWebSocket } from '../useWebSocket'
-import type { MockWebSocketConstructor } from '@/types/test-utils'
 
 // Mock WebSocket
 class MockWebSocket {
@@ -11,12 +10,15 @@ class MockWebSocket {
   static CLOSED = 3
 
   readyState = MockWebSocket.CONNECTING
-  onopen = vi.fn()
-  onclose = vi.fn()
-  onerror = vi.fn()
-  onmessage = vi.fn()
+  onopen: ((event: Event) => void) | null = null
+  onclose: ((event: CloseEvent) => void) | null = null
+  onerror: ((event: Event) => void) | null = null
+  onmessage: ((event: MessageEvent) => void) | null = null
+
+  static instances: MockWebSocket[] = []
 
   constructor(public url: string) {
+    MockWebSocket.instances.push(this)
     setTimeout(() => {
       this.readyState = MockWebSocket.OPEN
       this.onopen?.(new Event('open'))
@@ -25,7 +27,7 @@ class MockWebSocket {
 
   close() {
     this.readyState = MockWebSocket.CLOSED
-    this.onclose?.(new CloseEvent('close'))
+    this.onclose?.(new CloseEvent('close', { code: 1000 }))
   }
 
   send(_data: string) {
@@ -33,15 +35,18 @@ class MockWebSocket {
   }
 }
 
-global.WebSocket = MockWebSocket as unknown as typeof WebSocket
+global.WebSocket = MockWebSocket as any
 
 describe('useWebSocket', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.useFakeTimers()
+    MockWebSocket.instances = []
   })
 
   afterEach(() => {
     vi.clearAllTimers()
+    vi.useRealTimers()
   })
 
   it('should connect to WebSocket on mount', async () => {
@@ -53,7 +58,7 @@ describe('useWebSocket', () => {
 
     // Wait for connection
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      vi.advanceTimersByTime(100) // Initial delay + connection time
     })
 
     expect(result.current.connected).toBe(true)
@@ -63,7 +68,7 @@ describe('useWebSocket', () => {
     const { result } = renderHook(() => useWebSocket('ws://localhost:8000/ws/dashboard'))
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      vi.advanceTimersByTime(100)
     })
 
     const mockData = {
@@ -84,7 +89,7 @@ describe('useWebSocket', () => {
 
     // Simulate message
     act(() => {
-      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
+      const ws = MockWebSocket.instances[0]
       if (ws?.onmessage) {
         ws.onmessage(new MessageEvent('message', { 
           data: JSON.stringify(mockData) 
@@ -99,7 +104,8 @@ describe('useWebSocket', () => {
     const { result } = renderHook(() => useWebSocket('ws://invalid-url'))
 
     await act(async () => {
-      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
+      vi.advanceTimersByTime(100)
+      const ws = MockWebSocket.instances[0]
       if (ws?.onerror) {
         ws.onerror(new Event('error'))
       }
@@ -113,18 +119,19 @@ describe('useWebSocket', () => {
     const { result } = renderHook(() => useWebSocket('ws://localhost:8000/ws/dashboard'))
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      vi.advanceTimersByTime(100)
     })
 
     expect(result.current.connected).toBe(true)
 
     // Simulate disconnect
-    act(() => {
-      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
+    await act(async () => {
+      const ws = MockWebSocket.instances[0]
       if (ws?.onclose) {
         ws.readyState = MockWebSocket.CLOSED
-        ws.onclose(new CloseEvent('close'))
+        ws.onclose(new CloseEvent('close', { code: 1006 }))
       }
+      vi.advanceTimersByTime(1)
     })
 
     expect(result.current.connected).toBe(false)
@@ -132,14 +139,18 @@ describe('useWebSocket', () => {
     // Test reconnect
     await act(async () => {
       result.current.reconnect()
-      await new Promise(resolve => setTimeout(resolve, 10))
+      vi.advanceTimersByTime(100)
     })
 
     expect(result.current.connected).toBe(true)
   })
 
-  it('should cleanup on unmount', () => {
+  it('should cleanup on unmount', async () => {
     const { unmount } = renderHook(() => useWebSocket('ws://localhost:8000/ws/dashboard'))
+
+    await act(async () => {
+      vi.advanceTimersByTime(100) // Let connection establish
+    })
 
     const closeSpy = vi.spyOn(MockWebSocket.prototype, 'close')
     
