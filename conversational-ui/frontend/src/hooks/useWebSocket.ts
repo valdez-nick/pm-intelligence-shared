@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type { DashboardData, WebSocketMessage } from '@/types/dashboard'
+import type { DashboardData, WebSocketMessage, WorkflowStatus, SystemMetrics } from '@/types/dashboard'
 
 interface UseWebSocketReturn {
   data: DashboardData | null
@@ -47,7 +47,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
               // Update specific workflow status
               setData(prevData => {
                 if (!prevData) return prevData
-                const workflowUpdate = message.data as any
+                const workflowUpdate = message.data as WorkflowStatus
                 return {
                   ...prevData,
                   workflows: prevData.workflows.map(w => 
@@ -62,7 +62,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
                 if (!prevData) return prevData
                 return {
                   ...prevData,
-                  systemMetrics: message.data as any
+                  systemMetrics: message.data as SystemMetrics
                 }
               })
               break

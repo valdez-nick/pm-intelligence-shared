@@ -1,3 +1,5 @@
+import type { JsonObject } from './common'
+
 export interface WorkflowStatus {
   id: string
   name: string
@@ -7,7 +9,7 @@ export interface WorkflowStatus {
   estimatedCompletion?: string
   completedAt?: string
   error?: string
-  metadata?: Record<string, any>
+  metadata?: JsonObject
 }
 
 export interface SystemMetrics {

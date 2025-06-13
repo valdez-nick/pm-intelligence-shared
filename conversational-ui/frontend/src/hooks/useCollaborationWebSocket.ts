@@ -1,13 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-
-interface CollaborationMessage {
-  type: string;
-  session_id?: string;
-  agent_id?: string;
-  organization_id?: string;
-  data: any;
-  timestamp: string;
-}
+import type { CollaborationMessage } from '@/types/collaboration'
 
 interface CollaborationWebSocketReturn {
   connected: boolean;
@@ -162,6 +154,7 @@ export function useCollaborationWebSocket(
         clearTimeout(connectTimer);
       };
     }
+    return undefined;
   }, [connect, autoConnect]);
 
   useEffect(() => {

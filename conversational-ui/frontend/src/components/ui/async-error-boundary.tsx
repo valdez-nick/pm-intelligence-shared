@@ -76,7 +76,7 @@ export const AsyncErrorBoundary: React.FC<AsyncErrorBoundaryProps> = ({
     };
   }, [state.error, state.isOnline]);
 
-  const handleAsyncError = (error: any) => {
+  const handleAsyncError = (error: unknown) => {
     const errorObj = error instanceof Error ? error : new Error(String(error));
     
     setState(prev => ({

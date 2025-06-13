@@ -1,13 +1,15 @@
 // API Types matching the FastAPI backend
 
+import type { JsonObject, ErrorDetails, ConversationContext, ConversationArtifact, StepResult, AnalysisResult, ServiceDetails, IOSchema, WorkflowParam, WorkflowContext } from './common'
+
 export interface APIError {
   message: string
-  details: Record<string, any>
+  details: ErrorDetails | ErrorDetails[]
   path: string
   method: string
 }
 
-export interface APIResponse<T = any> {
+export interface APIResponse<T = unknown> {
   success: boolean
   data?: T
   error?: APIError
@@ -16,9 +18,9 @@ export interface APIResponse<T = any> {
 
 // Health Check Types
 export interface ServiceHealth {
-  status: string
+  status: 'healthy' | 'unhealthy' | 'degraded'
   response_time_ms: number
-  details: Record<string, any>
+  details: ServiceDetails
 }
 
 export interface HealthStatus {
@@ -32,7 +34,7 @@ export interface HealthStatus {
 export interface ConversationRequest {
   message: string
   session_id?: string
-  context?: Record<string, any>
+  context?: ConversationContext
 }
 
 export interface ConversationResponse {
@@ -41,7 +43,7 @@ export interface ConversationResponse {
   response: string
   timestamp: string
   tools_used: string[]
-  artifacts?: Record<string, any>
+  artifacts?: ConversationArtifact[]
 }
 
 export interface SessionInfo {
@@ -49,7 +51,7 @@ export interface SessionInfo {
   created_at: string
   last_activity: string
   message_count: number
-  context: Record<string, any>
+  context: ConversationContext
 }
 
 // Workflow Types
@@ -58,15 +60,15 @@ export interface WorkflowDefinition {
   name: string
   description: string
   version: string
-  inputs: Record<string, any>
-  outputs: Record<string, any>
+  inputs: IOSchema
+  outputs: IOSchema
   steps: WorkflowStep[]
 }
 
 export interface WorkflowStep {
   id: string
   type: string
-  params: Record<string, any>
+  params: WorkflowParam[]
   depends_on: string[]
   retry?: number
   timeout?: number
@@ -76,8 +78,8 @@ export interface WorkflowStep {
 
 export interface WorkflowExecutionRequest {
   workflow_id: string
-  inputs: Record<string, any>
-  user_context?: Record<string, any>
+  inputs: JsonObject
+  user_context?: WorkflowContext
 }
 
 export interface WorkflowExecutionResponse {
@@ -86,7 +88,7 @@ export interface WorkflowExecutionResponse {
   status: string
   started_at: string
   completed_at?: string
-  results?: Record<string, any>
+  results?: JsonObject
   error?: string
 }
 
@@ -96,8 +98,8 @@ export interface WorkflowStatus {
   progress: number
   current_step?: string
   completed_steps: string[]
-  step_results?: Record<string, any>
-  results?: Record<string, any>
+  step_results?: Record<string, StepResult>
+  results?: JsonObject
   error?: string
 }
 
@@ -105,7 +107,7 @@ export interface WorkflowProgress {
   progress: number
   currentStep: string
   status: string
-  stepResults?: any
+  stepResults?: StepResult[]
   executionId?: string
 }
 
@@ -136,7 +138,7 @@ export interface ConfluencePage {
 
 export interface MeetingIntelligenceOutput {
   workflow_id: string
-  analysis_results: Record<string, any>
+  analysis_results: AnalysisResult
   jira_tickets: JiraTicket[]
   confluence_pages: ConfluencePage[]
   execution_time: number
@@ -151,7 +153,7 @@ export interface ChatMessage {
   content: string
   timestamp: string
   tools_used?: string[]
-  artifacts?: Record<string, any>
+  artifacts?: ConversationArtifact[]
   status?: 'sending' | 'sent' | 'error'
 }
 

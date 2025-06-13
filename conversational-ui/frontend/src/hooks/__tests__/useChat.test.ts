@@ -14,7 +14,7 @@ vi.mock('@/services/api', () => ({
   }
 }))
 
-const mockApiClient = apiClient as any
+const mockApiClient = apiClient as any // TODO: Fix jest types
 
 describe('useChat Hook', () => {
   beforeEach(() => {

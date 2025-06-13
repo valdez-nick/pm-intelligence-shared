@@ -111,12 +111,12 @@ export class ErrorBoundary extends Component<Props, State> {
     });
   };
 
-  // private handleRetryWithDelay = () => {
-  //   // Show loading state briefly before retrying
-  //   this.retryTimeoutId = window.setTimeout(() => {
-  //     this.handleRetry();
-  //   }, 1000);
-  // };
+  private _handleRetryWithDelay = () => {
+    // Show loading state briefly before retrying
+    this.retryTimeoutId = window.setTimeout(() => {
+      this.handleRetry();
+    }, 1000);
+  };
 
   private handleReload = () => {
     window.location.reload();

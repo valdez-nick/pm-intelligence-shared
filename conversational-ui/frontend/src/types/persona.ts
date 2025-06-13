@@ -1,5 +1,7 @@
 // Type definitions for persona-related API interactions
 
+import type { JsonObject } from './common'
+
 export interface PersonaSearchRequest {
   query: string;
   industry?: string;
@@ -33,10 +35,9 @@ export interface PersonaDetailsResponse {
 
 export interface ScrapedPersona {
   id: string;
-  job_posting_id: string;
-  company_id: string;
   role_title: string;
   role_category: string;
+  company_id: string;
   authority_level: number;
   expertise: string[];
   priorities: string[];
@@ -45,12 +46,11 @@ export interface ScrapedPersona {
   stakeholders: string[];
   decision_style: string;
   communication_style: string;
-  company_context: Record<string, any>;
-  industry_context: Record<string, any>;
-  generated_at: string;
-  generation_method: string;
+  company_context: JsonObject;
+  industry_context: JsonObject;
+  system_prompt: string;
   confidence_score: number;
-  system_prompt?: string;
+  generated_at: string;
 }
 
 export interface PersonaImportRequest {
@@ -75,7 +75,7 @@ export interface ImportedAgent {
   metadata: {
     imported_from_persona: boolean;
     persona_id: string;
-    company_context?: Record<string, any>;
+    company_context?: JsonObject;
     confidence_score: number;
     generated_at: string;
     job_posting_id: string;
@@ -98,7 +98,7 @@ export interface CompanyProfile {
   size?: string;
   departments: string[];
   scraped_at: string;
-  metadata: Record<string, any>;
+  metadata: JsonObject;
 }
 
 export interface TemplatesResponse {

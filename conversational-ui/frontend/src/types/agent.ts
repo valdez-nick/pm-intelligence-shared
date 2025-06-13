@@ -1,23 +1,27 @@
+import type { JsonObject } from './common'
+
+export interface AgentPersona {
+  description: string;
+  expertise: string[];
+  decision_style: string;
+  communication_style: string;
+  priorities: string[];
+  constraints: string[];
+}
+
 export interface Agent {
   id: string;
   name: string;
   role: string;
   organization_id: string;
-  status: string;
+  status: 'active' | 'inactive' | 'pending' | 'error';
   authority_level: number;
   current_workload: number;
   capabilities: string[];
-  persona?: {
-    description: string;
-    expertise: string[];
-    decision_style: string;
-    communication_style: string;
-    priorities: string[];
-    constraints: string[];
-  };
+  persona?: AgentPersona;
   created_at: string;
   updated_at: string;
-  metadata?: Record<string, any>;
+  metadata?: JsonObject;
 }
 
 export interface AgentCapability {
@@ -35,12 +39,12 @@ export interface CreateAgentRequest {
   role: string;
   organization_id: string;
   template_id?: string;
-  custom_config?: Record<string, any>;
+  custom_config?: JsonObject;
 }
 
 export interface AgentResponse {
   agent_id: string;
   status: string;
-  data?: Record<string, any>;
+  data?: JsonObject;
   error?: string;
 }

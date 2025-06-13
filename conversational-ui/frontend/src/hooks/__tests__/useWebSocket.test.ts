@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useWebSocket } from '../useWebSocket'
+import type { MockWebSocketConstructor } from '@/types/test-utils'
 
 // Mock WebSocket
 class MockWebSocket {
@@ -32,7 +33,7 @@ class MockWebSocket {
   }
 }
 
-global.WebSocket = MockWebSocket as any
+global.WebSocket = MockWebSocket as unknown as typeof WebSocket
 
 describe('useWebSocket', () => {
   beforeEach(() => {
@@ -83,7 +84,7 @@ describe('useWebSocket', () => {
 
     // Simulate message
     act(() => {
-      const ws = (global.WebSocket as any).instances?.[0]
+      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
       if (ws?.onmessage) {
         ws.onmessage(new MessageEvent('message', { 
           data: JSON.stringify(mockData) 
@@ -98,7 +99,7 @@ describe('useWebSocket', () => {
     const { result } = renderHook(() => useWebSocket('ws://invalid-url'))
 
     await act(async () => {
-      const ws = (global.WebSocket as any).instances?.[0]
+      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
       if (ws?.onerror) {
         ws.onerror(new Event('error'))
       }
@@ -119,7 +120,7 @@ describe('useWebSocket', () => {
 
     // Simulate disconnect
     act(() => {
-      const ws = (global.WebSocket as any).instances?.[0]
+      const ws = (global.WebSocket as unknown as MockWebSocketConstructor).instances?.[0]
       if (ws?.onclose) {
         ws.readyState = MockWebSocket.CLOSED
         ws.onclose(new CloseEvent('close'))
