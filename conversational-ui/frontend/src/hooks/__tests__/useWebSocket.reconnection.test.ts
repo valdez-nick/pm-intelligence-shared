@@ -149,7 +149,7 @@ describe('useWebSocket - Reconnection Logic', () => {
 
     it('should cap exponential backoff at maximum delay', async () => {
       // This test will fail initially because current implementation doesn't have max delay cap
-      const { result } = renderHook(() => useWebSocket('ws://localhost:8000/ws/dashboard'))
+      renderHook(() => useWebSocket('ws://localhost:8000/ws/dashboard'))
 
       await act(async () => {
         vi.advanceTimersByTime(100)
