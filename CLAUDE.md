@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Recent Major Changes
+
+### Agent Tool Execution (January 2025)
+- **New Capability**: Agents can now dynamically analyze natural language queries and execute MCP tools
+- **Key Components**:
+  - `AgentToolExecutor`: Bridges agents and MCP adapters
+  - Enhanced `Agent` model with `analyze_and_execute_tools()` method
+  - `AgentConversationManager`: Orchestrates agent-based conversations
+  - New API endpoints in `/conversations/chat/agent`
+- **Benefits**: Natural language interface, persona-driven tool selection, dynamic execution
+- **Documentation**: See `docs/AGENT_TOOL_EXECUTION_ARCHITECTURE.md`
+
 ## Commands
 
 ### Platform Startup (All Services)
@@ -320,3 +332,6 @@ cd conversational-ui/frontend && rm -rf node_modules && npm install
 - Keep README files updated with setup and usage instructions
 - Document troubleshooting procedures and common issues
 - Maintain changelog for significant changes and releases
+
+## Development Practices
+- utilize subagents whenever possible
