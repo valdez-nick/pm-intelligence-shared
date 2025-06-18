@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, cloneElement, isValidElement } from 'react';
+import React, { createContext, useContext, useState, cloneElement, isValidElement, useEffect } from 'react';
 
 interface DialogContextType {
   open: boolean;
@@ -24,6 +24,23 @@ export const Dialog: React.FC<DialogProps> = ({ open: controlledOpen, onOpenChan
       setUncontrolledOpen(newOpen);
     }
   };
+
+  // Handle Escape key to close dialog
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && open) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open, setOpen]);
 
   return (
     <DialogContext.Provider value={{ open, setOpen }}>
@@ -82,7 +99,11 @@ export const DialogContent: React.FC<DialogContentProps> = ({ children, classNam
       />
       
       {/* Dialog content container */}
-      <div className={`relative z-50 bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 ${className}`}>
+      <div 
+        role="dialog" 
+        aria-modal="true"
+        className={`relative z-50 bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 ${className}`}
+      >
         {children}
       </div>
     </div>
