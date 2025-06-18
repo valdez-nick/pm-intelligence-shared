@@ -1,6 +1,6 @@
-# PM Intelligence Platform v2.1.0 🚀
+# PM Intelligence Platform
 
-Enterprise-grade AI automation platform with advanced agent capabilities - your intelligent PM co-pilot that learns, adapts, and optimizes workflows autonomously.
+Transform your product management workflow with AI-powered automation that acts as your intelligent PM co-pilot.
 
 ## 🚀 **New Collaborator? Start Here!**
 
@@ -32,27 +32,26 @@ Build the industry's first truly intelligent PM automation platform that underst
 
 ## 🚀 Features
 
-### ✨ NEW in v2.1.0: Enterprise Agent Platform
-- **Agent Learning System**: Persistent knowledge evolution with 60-80% compression
-- **Performance Analytics**: 20+ KPIs with AI-powered optimization insights
-- **Automated Testing**: Behavioral, performance, and security test suites
-- **Version Control**: Git-like versioning for agent configurations with branching
-- **Memory Management**: Advanced profiling with automatic leak detection
-- **Webhook Infrastructure**: Secure HMAC-SHA256 with retry logic and rate limiting
-- **Error Translation**: Multi-language support with progressive disclosure
-- **100% TypeScript**: Complete migration with strict type safety
-
 ### Core Platform
 - **Workflow Automation**: DAG-based workflow engine with parallel execution
 - **MCP Integration**: Connects to Jira, Confluence, GitHub, and more
 - **AI-Powered Analysis**: Integrated with assistant-mcp for intelligent insights
-- **Security & Compliance**: AES-256-GCM encryption with comprehensive audit logging
+- **Security & Compliance**: Built-in credential management and audit logging
+- **Offline LLM Operation**: Run all AI features locally with Ollama - no internet required!
 
 ### Conversational UI
 - **Natural Language Interface**: ChatGPT-style UI for PM tasks
 - **Context-Aware**: Maintains conversation context for complex workflows
 - **Quick Actions**: Pre-built templates for common PM tasks
-- **Real-time Updates**: WebSocket support with leak prevention
+- **Real-time Updates**: WebSocket support for live notifications
+
+### 🆕 Ollama Integration (January 2025)
+- **Complete Offline Operation**: Run all LLM features without internet connectivity
+- **Data Privacy**: All AI processing happens locally on your machine
+- **Cost Savings**: Zero API costs for LLM operations
+- **Model Flexibility**: Use any Ollama-compatible model (Llama 2, Mistral, CodeLlama, etc.)
+- **Easy Configuration**: Simply set `PM_INTEL_LLM_OFFLINE_MODE=true`
+- See [docs/OLLAMA_INTEGRATION.md](intel-platform-feature-planning/docs/OLLAMA_INTEGRATION.md) for setup guide
 
 ## 📁 Repository Structure
 
@@ -105,68 +104,22 @@ If you prefer manual control or the automated setup fails:
 
 📖 **Detailed Instructions**: [COLLABORATOR_SETUP.md](COLLABORATOR_SETUP.md)
 
-## 🆕 v2.1.0 Release Highlights
-
-**Enterprise Agent Platform** - Transform your PM workflows with intelligent agents that:
-- Learn from every interaction and persist knowledge across sessions
-- Monitor their own performance with 20+ metrics and auto-optimization
-- Test themselves automatically with behavioral, performance, and security suites
-- Version control configurations like code with Git-like branching/merging
-- Handle memory efficiently with leak detection and automatic cleanup
-- Integrate via secure webhooks with HMAC validation and retry logic
-- Provide user-friendly errors in multiple languages with progressive disclosure
-- Maintain 100% TypeScript coverage for enterprise reliability
-
-**Key Benefits:**
-- 🧠 **Persistent Learning**: Agents remember and improve over time
-- 📊 **Performance Insights**: Data-driven optimization recommendations
-- 🔒 **Enterprise Security**: Memory-safe with comprehensive audit trails
-- 🚀 **Production Ready**: Automated testing with <5 minute execution
-- 🌐 **Multi-language**: Error messages in 10+ languages
-- ⚡ **High Performance**: Optimized memory usage and leak prevention
-
-**Documentation:**
-- [E2E_TEST_DOCUMENTATION.md](intel-platform-feature-planning/E2E_TEST_DOCUMENTATION.md) - Comprehensive testing guide
-- [examples/complete_feature_demo.py](intel-platform-feature-planning/examples/complete_feature_demo.py) - Visual demo
-- **Release Notes**: [v2.1.0 GitHub Release](https://github.com/valdez-nick/assistant-platform/releases/tag/v2.1.0)
-
 ## 📚 Documentation
 
-### Quick Start
 - [QUICKSTART_CONVERSATIONAL_UI.md](QUICKSTART_CONVERSATIONAL_UI.md) - 5-minute setup guide
-- [COLLABORATOR_SETUP.md](COLLABORATOR_SETUP.md) - Detailed setup instructions
-
-### v2.1.0 Enterprise Features
-- [E2E_TEST_DOCUMENTATION.md](intel-platform-feature-planning/E2E_TEST_DOCUMENTATION.md) - Complete testing framework
-- [examples/complete_feature_demo.py](intel-platform-feature-planning/examples/complete_feature_demo.py) - Live demo script
-- **Agent Learning**: `intel-platform-feature-planning/src/pm_intelligence/agents/learning/`
-- **Performance Metrics**: `intel-platform-feature-planning/src/pm_intelligence/agents/metrics/`
-- **Testing Framework**: `intel-platform-feature-planning/src/pm_intelligence/testing/`
-- **Versioning System**: `intel-platform-feature-planning/src/pm_intelligence/agents/versioning/`
-
-### Core Platform
 - [SECURITY.md](SECURITY.md) - Security best practices
 - [intel-platform-feature-planning/README.md](intel-platform-feature-planning/README.md) - Core platform docs
 - [conversational-ui/README.md](conversational-ui/README.md) - UI documentation
-- [CLAUDE.md](CLAUDE.md) - Development guide
 
 ## 🔒 Security
 
-Enterprise-grade security for sensitive PM data:
+This platform handles sensitive PM data. We take security seriously:
 
-### v2.1.0 Security Enhancements
-- **AES-256-GCM Encryption**: Military-grade credential protection
-- **Memory Leak Detection**: Automated profiling with cleanup
-- **HMAC-SHA256 Webhooks**: Cryptographic signature validation
-- **Comprehensive Audit Logging**: Every action tracked and encrypted
-- **Input Validation**: Multi-layer sanitization and validation
-- **Security Testing**: Automated security test suites
-
-### Core Security
 - All credentials stored in environment variables
 - Pre-commit hooks scan for exposed secrets
-- Encrypted credential storage with secure_credential_manager
-- Regular security updates and vulnerability scanning
+- Audit logging for compliance
+- Encrypted credential storage
+- Regular security updates
 
 See [SECURITY.md](SECURITY.md) for detailed security practices.
 
