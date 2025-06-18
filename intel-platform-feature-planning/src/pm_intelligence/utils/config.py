@@ -51,6 +51,20 @@ class Config(BaseSettings):
     cache_ttl: int = 300
     max_concurrent_workflows: int = 50
     connection_pool_size: int = 20
+    
+    # File Storage Configuration
+    FILE_STORAGE_PATH: Path = Path("./storage")
+    FILE_MAX_SIZE_MB: int = 100
+    FILE_ALLOWED_EXTENSIONS: list = Field(default_factory=lambda: [
+        "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", 
+        "txt", "csv", "json", "xml", "md", "rtf",
+        "png", "jpg", "jpeg", "gif", "bmp", "svg"
+    ])
+    FILE_SCAN_ENABLED: bool = True
+    FILE_CDR_ENABLED: bool = True
+    FILE_ENCRYPTION_ENABLED: bool = False
+    CDN_BASE_URL: Optional[str] = None
+    STORAGE_BACKEND: str = "local"  # local, s3, azure
 
     # Security Configuration
     enable_audit_logging: bool = True
