@@ -90,7 +90,7 @@ export const useFileProcessing = (options: UseFileProcessingOptions = {}) => {
         }
       })
 
-      socket.on('error', (error) => {
+      socket.on('error', (error: Error) => {
         console.error('WebSocket error:', error)
         setState(prev => ({ ...prev, error: new Error('WebSocket connection failed') }))
       })
